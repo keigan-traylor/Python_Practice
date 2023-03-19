@@ -1,0 +1,47 @@
+import hashlib
+import random
+import sys
+
+while True:
+    user_input = input("Enter 'run' to execute the script: ")
+    if user_input.strip().lower() == 'run':
+        break
+
+while True:
+    # Generate a random seed for the hash function
+    random.seed()
+
+    # Generate a random 10-digit number
+    number = random.randint(1000000000, 9999999999)
+
+    # Concatenate "Hello, world!" with the random number
+    message = "Hello, world! " + str(number)
+
+    # Compute the hash of the message
+    hash_value = hashlib.sha256(message.encode()).hexdigest()
+
+    # Print the message and hash
+    print(message)
+    print("Hash: " + hash_value)
+
+    # Store the output and hash in a list
+    output_list = []
+    output_list.append((message, hash_value))
+
+    # Generate a new signature for the script
+    new_signature = hashlib.sha256(str(random.random()).encode()).hexdigest()
+
+    # Read the contents of the current script file
+    with open(sys.argv[0], 'r') as f:
+        contents = f.read()
+
+    # Replace the old signature with the new one
+    new_contents = contents.replace(hashlib.sha256(new_signature.encode()).hexdigest(), new_signature)
+
+    # Write the new contents back to the script file
+    with open(sys.argv[0], 'w') as f:
+        f.write(new_contents)
+
+    user_input = input("Enter 'run' to execute the script again, or 'exit' to quit: ")
+    if user_input.strip().lower() == 'exit':
+        break
